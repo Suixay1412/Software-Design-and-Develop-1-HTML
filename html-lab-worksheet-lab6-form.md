@@ -224,10 +224,196 @@
 ### บันทึกผลการทดลอง
 [วางโค้ด HTML ที่นี่]
 ```html
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ฟอร์มสมัครสมาชิกร้านค้าออนไลน์</title>
+    <style>
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .input-wrapper {
+            display: flex;
+            align-items: center;
+        }
+        
+        .required-mark {
+            color: red;
+            margin-left: 5px;
+        }
 
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid #ccc;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+    <script>
+        function validateForm() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const phone = document.getElementById('phone').value;
+            const profilePicture = document.getElementById('profilePicture').files[0];
+            const day = document.getElementById('day').value;
+            const month = document.getElementById('month').value;
+            const year = document.getElementById('year').value;
+
+            const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$/;
+            if (!emailPattern.test(email)) {
+                alert('รูปแบบอีเมลไม่ถูกต้อง');
+                return false;
+            }
+
+            if (password.length < 8) {
+                alert('รหัสผ่านต้องมีอย่างน้อย 8 ตัวอักษร');
+                return false;
+            }
+
+            if (password !== confirmPassword) {
+                alert('รหัสผ่านและการยืนยันรหัสผ่านไม่ตรงกัน');
+                return false;
+            }
+
+            const phonePattern = /^[0-9]{10}$/;
+            if (!phonePattern.test(phone)) {
+                alert('รูปแบบเบอร์โทรไม่ถูกต้อง');
+                return false;
+            }
+
+            if (profilePicture.size > 2 * 1024 * 1024) { // 2MB
+                alert('ขนาดไฟล์รูปภาพต้องไม่เกิน 2MB');
+                return false;
+            }
+
+            if (!day.match(/(0[1-9]|[12][0-9]|3[01])/) || !month.match(/(0[1-9]|1[0-2])/) || !year.match(/^[0-9]{4}$/)) {
+                alert('รูปแบบวันเกิดไม่ถูกต้อง');
+                return false;
+            }
+
+            return true;
+        }
+    </script>
+</head>
+<body>
+
+    <form action="/register" method="post" onsubmit="return validateForm()" enctype="multipart/form-data">
+        <fieldset>
+            <legend>ข้อมูลส่วนตัว</legend>
+            
+            <div class="form-group">
+                <label for="firstName">ชื่อ:</label>
+                <input type="text" id="firstName" name="firstName" required>
+            </div>
+
+            <div class="form-group">
+                <label for="lastName">นามสกุล:</label>
+                <input type="text" id="lastName" name="lastName" required>
+            </div>
+
+            <div class="form-group">
+                <label for="birthdate">วันเกิด:</label>
+                <div class="input-wrapper">
+                    <input type="text" id="day" name="day" pattern="(0[1-9]|[12][0-9]|3[01])" maxlength="2" placeholder="dd" required>
+                    /
+                    <input type="text" id="month" name="month" pattern="(0[1-9]|1[0-2])" maxlength="2" placeholder="mm" required>
+                    /
+                    <input type="text" id="year" name="year" pattern="^[0-9]{4}$" maxlength="4" placeholder="yyyy" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>เพศ:</label>
+                <input type="radio" id="male" name="gender" value="male" required>
+                <label for="male">ชาย</label>
+                <input type="radio" id="female" name="gender" value="female">
+                <label for="female">หญิง</label>
+            </div>
+        </fieldset>
+        <fieldset>
+            <legend>ข้อมูลการติดต่อ</legend>
+
+            <div class="form-group">
+                <label for="email">อีเมล:</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+
+            <div class="form-group">
+                <label for="phone">เบอร์โทร:</label>
+                <input type="tel" id="phone" name="phone" pattern="[0-9]{10}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="address">ที่อยู่จัดส่ง:</label>
+                <textarea id="address" name="address" rows="3" required></textarea>
+            </div>
+        </fieldset>
+        <fieldset>
+            <legend>รูปโปรไฟล์</legend>
+            <div class="form-group">
+                <label for="profilePicture">รูปโปรไฟล์:</label>
+                <input type="file" id="profilePicture" name="profilePicture" accept="image/*" required>
+            </div>
+        </fieldset>
+        <fieldset>
+            <legend>การยืนยันรหัสผ่าน</legend>
+            <div class="form-group">
+                <label for="password">รหัสผ่าน:</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+
+            <div class="form-group">
+                <label for="confirmPassword">ยืนยันรหัสผ่าน:</label>
+                <input type="password" id="confirmPassword" name="confirmPassword" required>
+            </div>
+        </fieldset>
+        <fieldset>
+            <legend>ความสนใจในหมวดหมู่สินค้า</legend>
+            <div class="form-group">
+                <label>ความสนใจ:</label>
+                <input type="checkbox" id="electronics" name="interests" value="electronics">
+                <label for="electronics">เครื่องใช้ไฟฟ้า</label>
+                <input type="checkbox" id="fashion" name="interests" value="fashion">
+                <label for="fashion">แฟชั่น</label>
+                <input type="checkbox" id="books" name="interests" value="books">
+                <label for="books">หนังสือ</label>
+                <input type="checkbox" id="beauty" name="interests" value="beauty">
+                <label for="beauty">ความงาม</label>
+            </div>
+        </fieldset>
+        <fieldset>
+            <legend>การยอมรับเงื่อนไขการใช้งาน</legend>
+            <div class="form-group">
+                <input type="checkbox" id="agree" name="agree" required>
+                <label for="agree">
+                    ข้าพเจ้ายอมรับเงื่อนไขการใช้งาน
+                </label>
+            </div>
+        </fieldset>
+
+        <div class="form-group">
+            <button type="submit">สมัครสมาชิก</button>
+            <button type="reset">ล้างข้อมูล</button>
+        </div>
+    </form>
+
+</body>
+</html>
 ```
 - ภาพผลลัพธ์:
 [วางภาพ screenshot ที่นี่]
+![image](https://github.com/user-attachments/assets/9d820674-e780-4960-b814-68a01e8fe59b)
 
 
 
